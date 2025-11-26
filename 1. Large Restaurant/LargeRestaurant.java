@@ -305,6 +305,7 @@ class Order {
 
 public class LargeRestaurant {
     public static void main(String[] args) {
+        System.out.println("------------------------------------");
         System.out.println("Large Restaurant Management System: ");
         System.out.println("------------------------------------");
 
@@ -331,8 +332,8 @@ public class LargeRestaurant {
         MenuItem M6 = new Beverage("Espresso", 75000, "Small", "Hot");
         List<MenuItem> menu = Arrays.asList(M1, M2, M3, M4, M5, M6);
 
-
         // 4. Orders:
+        System.out.println("------------------------------------");
         System.out.println("\nRegistering and calculating orders:");
         System.out.println("------------------------------------");
 
@@ -357,6 +358,7 @@ public class LargeRestaurant {
         createAndProcessOrder(C3, Arrays.asList(M6, M6, M6, M6, M5, M5)); // 500.000 > +1 Point > total points: 1
 
         // 5. The Most Loyal Customer:
+        System.out.println("------------------------------------");
         System.out.println("\nThe Most Loyal Customer:");
         System.out.println("------------------------------------");
         Customer mostLoyal = findMostLoyalCustomer(customers);
@@ -369,6 +371,7 @@ public class LargeRestaurant {
         }
 
         // 6. Print Summary Information for Customers:
+        System.out.println("------------------------------------");
         System.out.println("\nCustomer Information Summary: ");
         System.out.println("------------------------------------");
         for (Customer customer: customers) {
@@ -376,6 +379,7 @@ public class LargeRestaurant {
         }
 
         // 7. Salaries:
+        System.out.println("------------------------------------");
         System.out.println("\nCalculating employee salaries: ");
         System.out.println("------------------------------------");
 
@@ -392,6 +396,7 @@ public class LargeRestaurant {
         }
 
         // 8. Print Summary Information for Employees:
+        System.out.println("------------------------------------");
         System.out.println("\nEmployees Information Summary: ");
         System.out.println("------------------------------------");
         for (Employee employee: employees) {
@@ -399,6 +404,7 @@ public class LargeRestaurant {
         }
 
         // 9. Summary of Menu Items:
+        System.out.println("------------------------------------");
         System.out.println("\nMenu Items Summary: ");
         System.out.println("------------------------------------");
         for (MenuItem item: menu) {
@@ -422,4 +428,3 @@ public class LargeRestaurant {
                 .orElse(null);
     }
 }
-// :>
