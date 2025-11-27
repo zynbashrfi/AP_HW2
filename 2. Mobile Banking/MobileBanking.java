@@ -1,5 +1,4 @@
 // MOBILE BANKING:
-import java.lang.classfile.instruction.ReturnInstruction;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -11,14 +10,17 @@ public class MobileBanking {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        System.out.println("-----------------------");
         System.out.println("Welcome to Mobile Bank!");
+        System.out.println("-----------------------");
 
         while (true) {
             String command = scanner.nextLine().trim();
-            String[] parts = command.split("\\s+");
+            if (command.isEmpty()) continue;
 
-            if (parts.length == 0) continue;
+            String[] parts = command.split("\\s+");
             String action = parts[0];
+
             if (action.equals("exit")) {
                 System.out.println("Goodbye!");
                 break;
@@ -48,9 +50,11 @@ public class MobileBanking {
                 System.out.println("Invalid Command.");
             }
         }
+        scanner.close();
     }
 
     private static void HandleRegister(String[] parts) {
+        // register <Username> <Password> <FullName> <PhoneNumber> <Email>
         if (parts.length < 5) {
             System.out.println("Error: Invalid register format.");
             return;
@@ -58,24 +62,27 @@ public class MobileBanking {
 
         String username = parts[1];
         String password = parts[2];
-        String email = parts[parts.length - 1];
         String phoneNumber = parts[parts.length - 2];
+        String email = parts[parts.length - 1];
 
         StringBuilder fullNameBuilder = new StringBuilder();
         for (int i = 3; i < parts.length - 2; i++) {
             fullNameBuilder.append(parts[i]);
             if (i < parts.length - 3) {
-                fullNameBuilder.append(".");
+                fullNameBuilder.append(" ");
             }
         }
         String fullName = fullNameBuilder.toString();
 
+    //  username uniqueness:
         for (String[] user : users) {
             if (user[0].equals(username)) {
                 System.out.println("Error: username already exists.");
                 return;
             }
         }
+
+    //  validations:
         if (!PasswordValidity(password)) {
             System.out.println("Error: Invalid password format.");
             return;
@@ -115,7 +122,7 @@ public class MobileBanking {
         for (String[] user : users) {
             if (user[0].equals(username) && user[1].equals(password)) {
                 currentUser = user;
-                System.out.print("Login successful.");
+                System.out.println("Login successful.");
                 return;
             }
         }
@@ -124,7 +131,7 @@ public class MobileBanking {
 
     private static void HandleLogout() {
         if (currentUser == null) {
-            System.out.println("Error: You alre not logged in.");
+            System.out.println("Error: You are not logged in.");
         }
         else {
             currentUser = null;
@@ -150,12 +157,24 @@ public class MobileBanking {
             return;
         }
 
-        double amount = Double.parseDouble(parts[1]);
+        double amount;
+        try {
+            amount = Double.parseDouble(parts[1]);
+        }
+        catch (NumberFormatException e) {
+            System.out.println("Error: Invalid amount.");
+            return;
+        }
+        if (amount <= 0) {
+            System.out.println("Error: Amount must be positive.");
+            return;
+        }
+
         double currentBalance = Double.parseDouble(currentUser[6]);
         double newBalance = currentBalance + amount;
 
         currentUser[6] = String.valueOf(newBalance);
-        System.out.println("Deposit successful. Current balance: " + newBalance);
+        System.out.println("Deposit successful. Current Balance: " + newBalance);
     }
 
     private static void HandleWithdraw(String[] parts) {
@@ -168,7 +187,18 @@ public class MobileBanking {
             return;
         }
 
-        double amount = Double.parseDouble(parts[1]);
+        double amount;
+        try {
+            amount = Double.parseDouble(parts[1]);
+        }
+        catch (NumberFormatException e) {
+            System.out.println("Error: Invalid amount.");
+            return;
+        }
+        if (amount <= 0) {
+            System.out.println("Error: Amount must be positive.");
+            return;
+        }
         double currentBalance = Double.parseDouble(currentUser[6]);
 
         if (currentBalance >= amount) {
@@ -192,7 +222,18 @@ public class MobileBanking {
         }
 
         String destCardNumber = parts[1];
-        double amount = Double.parseDouble(parts[2]);
+        double amount;
+        try {
+            amount = Double.parseDouble(parts[2]);
+        }
+        catch (NumberFormatException e) {
+            System.out.println("Error: Invalid amount.");
+            return;
+        }
+        if (amount <= 0) {
+            System.out.println("Error: Amount must be positive.");
+            return;
+        }
         double currentBalance = Double.parseDouble(currentUser[6]);
 
         String[] destUser = null;
@@ -213,13 +254,14 @@ public class MobileBanking {
         double newSourceBalance = currentBalance - amount;
         currentUser[6] = String.valueOf(newSourceBalance);
 
-        double destBalannce = Double.parseDouble(destUser[6]);
-        double newDestBalance = destBalannce + amount;
+        double destBalance = Double.parseDouble(destUser[6]);
+        double newDestBalance = destBalance + amount;
         destUser[6] = String.valueOf(newDestBalance);
 
         System.out.println("Transferred successfully.");
     }
 
+    // Check Validity Methods:
     private static boolean PasswordValidity(String password) {
         if (password.length() < 8) return false;
         boolean hasUpper = false;
@@ -232,7 +274,7 @@ public class MobileBanking {
             if (Character.isUpperCase(ch)) hasUpper = true;
             else if (Character.isLowerCase(ch)) hasLower = true;
             else if (Character.isDigit(ch))  hasDigit = true;
-            else hasSpecial = true; // if not alphabet or digit, then it's special char.
+            else hasSpecial = true; // if not alphabet or digit, then it's count as special.
         }
 
         return hasUpper && hasLower && hasDigit && hasSpecial;
@@ -252,8 +294,9 @@ public class MobileBanking {
 
     private static boolean EmailValidity(String email) {
         int atIndex = email.indexOf("@");
-        if (atIndex < 1) return false;
+        if (atIndex < 1) return false; // at least one char before @
         if (email.startsWith(".")) return false;
+        if (email.lastIndexOf("@") != atIndex) return false; // only one @
         String domain = email.substring(atIndex + 1);
         return domain.equals("aut.com");
     }
